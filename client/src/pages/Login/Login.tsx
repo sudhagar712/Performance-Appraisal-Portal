@@ -13,10 +13,10 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col mt-[-60px] md:mt-[-20px]">
+    <div className="min-h-screen flex flex-col mt-[-90px] md:mt-[-90px]">
       {/* Main Content */}
       <div
-        className="flex-1 flex justify-center items-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative"
+        className="flex-1 flex justify-center  items-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative"
         style={{
           backgroundImage: `url(${backgroundImage})`,
           backgroundSize: "cover",
