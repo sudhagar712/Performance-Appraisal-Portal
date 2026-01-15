@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useLogoutMutation } from '../../store/api/authApi';
 import { clearCredentials } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -13,6 +14,7 @@ const Dashboard = () => {
     try {
       await logout().unwrap();
       dispatch(clearCredentials());
+      toast.success('Logout successful!');
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);

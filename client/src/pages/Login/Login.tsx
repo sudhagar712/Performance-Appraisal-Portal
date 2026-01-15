@@ -7,6 +7,7 @@ import LoginHead from '@/components/loginheader/LoginHead';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useLoginMutation } from '../../store/api/authApi';
 import { setCredentials } from '../../store/slices/authSlice';
+import toast from 'react-hot-toast';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +38,7 @@ const Login = () => {
     try {
       const result = await login({ email, password }).unwrap();
       dispatch(setCredentials(result.user));
+      toast.success('Login successful!');
     } catch (err) {
       console.error('Login failed:', err);
     }
