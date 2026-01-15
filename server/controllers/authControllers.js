@@ -6,7 +6,6 @@ import jwt from "jsonwebtoken";
 
 const setTokenCookie = (res, token) => {
   const isProd = process.env.NODE_ENV === "production";
-
   res.cookie("token", token, {
     httpOnly: true,
     secure: isProd, // true in production
@@ -89,7 +88,6 @@ export const registerApi = async (req, res) => {
 
 
 // login api
-
 export const loginApi = async(req,res)=> {
   try {
     const {email, password} = req.body;

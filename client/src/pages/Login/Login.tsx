@@ -13,11 +13,13 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  // ............................................. dispatch .............................................
   const dispatch = useAppDispatch();
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [login, { isLoading, error }] = useLoginMutation();
+  // ............................................. navigate .............................................
   const navigate = useNavigate();
+  // ............................................. location .............................................
   const location = useLocation();
 
 
@@ -28,6 +30,7 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate, location]);
 
+  // ............................................. toggle password visibility .............................................
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -41,6 +44,7 @@ const Login = () => {
       toast.success('Login successful!');
     } catch (err) {
       console.error('Login failed:', err);
+      toast.error('Login failed. Please check your credentials.');
     }
   };
 
@@ -52,8 +56,7 @@ const Login = () => {
   return (
     <>
     <LoginHead/>
-      <div className="min-h-screen flex flex-col mt-[-100px]">
-        {/* Main Content */}
+      <div className="min-h-screen flex flex-col mt-[-100px] md:mt-[-50px]">
         <div
           className="flex-1 flex justify-center  items-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative"
           style={{
@@ -64,10 +67,10 @@ const Login = () => {
             backgroundAttachment: "fixed",
           }}
         >
-          {/* Light overlay */}
+          {/* ............................................. Light overlay ............................................. */}
           <div className="absolute inset-0 bg-opacity-30"></div>
 
-          {/* Login Card */}
+          {/* ............................................. Login Card ............................................. */}
           <div className="relative z-10 mt-[30px] bg-white/70 rounded-lg shadow-2xl p-6 sm:p-8 w-full md:max-w-md">
             <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6 sm:mb-8">
               Login
@@ -97,7 +100,7 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Password Input */}
+              {/* ............................................. Password Input ............................................. */}
               <div className="relative">
                 <div className="relative flex items-center">
                   <input
@@ -124,7 +127,7 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Login Button */}
+              {/* ............................................. Login Button ............................................. */}
               <div className="mt-[-25px]">
                 <button
                   type="submit"
@@ -138,7 +141,7 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* ............................................. Footer ............................................. */}
         <footer className="bg-white py-6 sm:py-8 px-4 sm:px-6 lg:px-8 ">
           <div className="max-w-7xl mx-auto">
             {/* Bottom Text */}

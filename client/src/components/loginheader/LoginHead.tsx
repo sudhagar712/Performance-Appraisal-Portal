@@ -27,7 +27,7 @@ const LoginHead = () => {
               <li key={link.path}>
                 <Link
                   to={link.path}
-                  className="text-sm lg:text-base font-medium hover:text-blue-400 transition duration-300"
+                  className="text-sm lg:text-base font-medium text-blue-400 transition duration-300"
                 >
                   {link.name}
                 </Link>
