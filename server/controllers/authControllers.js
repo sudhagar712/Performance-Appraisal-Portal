@@ -2,25 +2,28 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 
 
+
+
 const setTokenCookie = (res, token) => {
+  const isProd = process.env.NODE_ENV === "production";
+
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: isProd, // true in production
+    sameSite: isProd ? "none" : "lax", 
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
 
 
 // register api
+
 export const registerApi = async (req, res) => {
   try {
     const { name, email, password, role, managerId } = req.body;
 
     if (!name || !email || !password || !role) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields required" });
+      return res.status(400).json({ success: false, message: "All fields required" });
     }
 
     if (!["employee", "manager"].includes(role)) {
@@ -32,12 +35,10 @@ export const registerApi = async (req, res) => {
 
     const existing = await User.findOne({ email: email.toLowerCase() });
     if (existing) {
-      return res
-        .status(409)
-        .json({ success: false, message: "Email already exists" });
+      return res.status(409).json({ success: false, message: "Email already exists" });
     }
 
- 
+    // ✅ Employee must have managerId
     if (role === "employee" && !managerId) {
       return res.status(400).json({
         success: false,
@@ -45,7 +46,7 @@ export const registerApi = async (req, res) => {
       });
     }
 
-    
+    // ✅ Validate managerId (must be a manager)
     if (role === "employee") {
       const manager = await User.findById(managerId);
       if (!manager || manager.role !== "manager") {
@@ -72,7 +73,7 @@ export const registerApi = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        ...(user.role === "employee" && { managerId: user.managerId }),
+        managerId: user.managerId,
       },
     });
   } catch (error) {
@@ -84,6 +85,7 @@ export const registerApi = async (req, res) => {
     });
   }
 };
+
 
 
 // login api
@@ -160,7 +162,7 @@ export const logoutApi = async (req, res) => {
 };
 
 
-//Current user
+// ✅ Current user
 export const meApi = async (req, res) => {
   try {
     res.json({ success: true, user: req.user });
