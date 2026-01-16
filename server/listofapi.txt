@@ -1,0 +1,19 @@
+// Base URL:
+http://localhost:8000/api
+
+Login:
+POST /auth/login
+
+Appraisal:
+POST /appraisals
+PUT /appraisals/:id
+POST /appraisals/:id/submit
+
+Manager:
+GET /appraisals
+GET /appraisals/:id
+POST /appraisals/:id/review
+
+Notifications:
+GET /notifications
+Post /notification/:id/read
