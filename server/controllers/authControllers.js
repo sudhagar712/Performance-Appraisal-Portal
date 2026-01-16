@@ -9,7 +9,8 @@ const setTokenCookie = (res, token) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: isProd, // true in production
-    sameSite: isProd ? "none" : "lax", 
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
@@ -147,6 +148,7 @@ export const logoutApi = async (req, res) => {
        httpOnly: true,
        sameSite: "lax",
        secure: process.env.NODE_ENV === "production",
+       path: "/",
      });
 
      res.json({ success: true, message: "Logout success" });
