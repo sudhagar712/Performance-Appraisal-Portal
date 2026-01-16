@@ -4,12 +4,13 @@ import AppRoutes from "./routes/AppRoutes";
 import { useGetCurrentUserQuery } from "./api/authApi";
 import { useAppDispatch } from "./app/hooks";
 import { setCredentials, clearCredentials } from "./features/auth/authSlice";
-import Loader from "./components/Loader";
 
 export default function App() {
   const dispatch = useAppDispatch();
 
-  const { data, isError, isLoading } = useGetCurrentUserQuery();
+  const { data, isError } = useGetCurrentUserQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
     if (data?.user) {
@@ -20,11 +21,7 @@ export default function App() {
     }
   }, [data, isError, dispatch]);
 
-  
-  if (isLoading) {
-    return <Loader text="Checking session..." />;
-  }
-
+ 
   return (
     <BrowserRouter>
       <AppRoutes />

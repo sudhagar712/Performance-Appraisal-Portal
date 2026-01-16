@@ -1,4 +1,5 @@
 import { Code } from "lucide-react";
+import logo from "../../assets/images/navbarlogo.png";
 
 const LoginFooter = () => {
   return (
@@ -6,7 +7,8 @@ const LoginFooter = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Bottom Text */}
         <div className="mt-6 ">
-          <div className="flex items-center justify-center">
+          <div className="flex  flex-col items-center justify-center ">
+            <img src={logo} alt="login background logo" className="w-[180px] sm:w-[180px] " />
             {/* Developed By Badge */}
             <div className="flex items-center gap-2 blink-glow  px-5 py-3 bg-white border border-gray-200 rounded-full shadow-[0_0_15px_rgba(59,130,246,0.3)]">
               <span className="text-gray-700 font-medium text-sm">
