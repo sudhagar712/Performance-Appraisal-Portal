@@ -1,33 +1,33 @@
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import Login from "./pages/Login/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Dashboard from "./pages/Dashboard/Dashboard";
+import { useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./routes/AppRoutes";
+import { useGetCurrentUserQuery } from "./api/authApi";
+import { useAppDispatch } from "./app/hooks";
+import { setCredentials, clearCredentials } from "./features/auth/authSlice";
+import Loader from "./components/Loader";
 
-function App() {
+export default function App() {
+  const dispatch = useAppDispatch();
+
+  const { data, isError, isLoading } = useGetCurrentUserQuery();
+
+  useEffect(() => {
+    if (data?.user) {
+      dispatch(setCredentials(data.user));
+    }
+    if (isError) {
+      dispatch(clearCredentials());
+    }
+  }, [data, isError, dispatch]);
+
+  
+  if (isLoading) {
+    return <Loader text="Checking session..." />;
+  }
+
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        
-        {/* Catch all - redirect to dashboard */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+      <AppRoutes />
     </BrowserRouter>
   );
 }
-
-export default App;

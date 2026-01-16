@@ -1,167 +1,123 @@
-import { FaUser, FaEye, FaEyeSlash } from 'react-icons/fa'
-import backgroundImage from '../../assets/images/loginback.png'
-import { FaCode } from "react-icons/fa";
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import LoginHead from '@/components/loginheader/LoginHead';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useLoginMutation } from '../../store/api/authApi';
-import { setCredentials } from '../../store/slices/authSlice';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useLoginMutation } from "../../api/authApi";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setCredentials } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
+import loginBackground from "../../assets/images/loginback.png";
+import LoginFooter from "./LoginFooter";
+import { User, Lock, Eye, EyeOff } from "lucide-react";
+import logo from "../../assets/images/navbarlogo.png";
 
-const Login = () => {
+
+export default function Login() {
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  // ............................................. dispatch .............................................
+  const [login, { isLoading }] = useLoginMutation();
   const dispatch = useAppDispatch();
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
-  const [login, { isLoading, error }] = useLoginMutation();
-  // ............................................. navigate .............................................
   const navigate = useNavigate();
-  // ............................................. location .............................................
-  const location = useLocation();
+  const { isAuthenticated, user } = useAppSelector((s) => s.auth);
 
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
+    if (isAuthenticated && user) {
+      navigate(user.role === "manager" ? "/manager" : "/employee", { replace: true });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, user, navigate]);
 
-  // ............................................. toggle password visibility .............................................
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  //............................................. handle submit .............................................
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  
+  // ......................Submit Form......................
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const result = await login({ email, password }).unwrap();
-      dispatch(setCredentials(result.user));
-      toast.success('Login successful!');
-    } catch (err) {
-      console.error('Login failed:', err);
-      toast.error('Login failed. Please check your credentials.');
+      const res = await login(form).unwrap();
+      dispatch(setCredentials(res.user));
+      navigate(res.user.role === "manager" ? "/manager" : "/employee");
+    } catch (err: unknown) {
+      const error = err as { data?: { message?: string } };
+      alert(error?.data?.message || "Login failed");
     }
   };
-
-  //............................................. error message .............................................
-  const errorMessage = error && 'data' in error 
-    ? (error.data as { message?: string })?.message || 'Login failed. Please try again.'
-    : null;
 
   return (
     <>
-    <LoginHead/>
-      <div className="min-h-screen flex flex-col mt-[-100px] md:mt-[-50px]">
-        <div
-          className="flex-1 flex justify-center  items-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundAttachment: "fixed",
-          }}
-        >
-          {/* ............................................. Light overlay ............................................. */}
-          <div className="absolute inset-0 bg-opacity-30"></div>
+  
+      <style>{`
+        .login-background {
+          background-image: url(${loginBackground});
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+      `}</style>
+     
+      
+      <div className="min-h-screen flex flex-col ">
+        <div className="flex-1 flex items-center justify-center login-background p-5">
+          <form
+            onSubmit={submit}
+            className="bg-white/30 backdrop-blur-sm w-full max-w-[600px] p-8 rounded-xl shadow-xl border border-gray-200"
+          >
+            <h1 className="text-xl md:text-2xl text-center font-bold mb-6 text-gray-800">
+              Login 
+            </h1>
 
-          {/* ............................................. Login Card ............................................. */}
-          <div className="relative z-10 mt-[30px] bg-white/70 rounded-lg shadow-2xl p-6 sm:p-8 w-full md:max-w-md">
-            <h2 className="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6 sm:mb-8">
-              Login
-            </h2>
-
-            <form className="space-y-5" onSubmit={handleSubmit}>
-              {/* Error Message */}
-              {errorMessage && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                  {errorMessage}
-                </div>
-              )}
-
-              {/* Email Input */}
+            {/* email Field */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter Email <span className="text-red-500">*</span>
+              </label>
               <div className="relative">
-                <div className="relative flex items-center">
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 border-b-2 border-gray-300 focus:outline-none focus:border-teal-600 bg-gray-50"
-                    placeholder="Enter your Email"
-                    required
-                    disabled={isLoading}
-                  />
-                  <FaUser className="absolute right-4 text-blue-400" />
-                </div>
-              </div>
-
-              {/* ............................................. Password Input ............................................. */}
-              <div className="relative">
-                <div className="relative flex items-center">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 border-b-2 border-gray-300 focus:outline-none focus:border-teal-600 bg-gray-50"
-                    placeholder="Enter your Password"
-                    required
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="absolute right-4 text-blue-400 hover:text-blue-500 transition duration-300 cursor-pointer"
-                    disabled={isLoading}
-                  >
-                    {showPassword ? (
-                      <FaEyeSlash size={18} />
-                    ) : (
-                      <FaEye size={18} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* ............................................. Login Button ............................................. */}
-              <div className="mt-[-25px]">
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-blue-500 text-white py-3 rounded font-bold hover:bg-blue-600 transition duration-300 mt-8 uppercase text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? 'Logging in...' : 'Login »'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        {/* ............................................. Footer ............................................. */}
-        <footer className="bg-white py-6 sm:py-8 px-4 sm:px-6 lg:px-8 ">
-          <div className="max-w-7xl mx-auto">
-            {/* Bottom Text */}
-            <div className="text-center mt-[-10px] ">
-              <div className="inline-flex justify-center items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 border-2 border-blue-600 rounded-full whitespace-nowrap blink-glow">
-                <span className="text-gray-700 font-medium text-xs sm:text-sm">
-                  Developed By
-                </span>
-                <span className="text-blue-600 font-bold text-xs sm:text-sm flex items-center gap-1">
-                  <FaCode size={14} />
-                  Sudhagar M
-                </span>
+                <input
+                  className="w-full bg-white border border-gray-300 p-3 pl-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter Email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               </div>
             </div>
-          </div>
-        </footer>
+
+            {/* Password Field */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter password <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  className="w-full bg-white border border-gray-300 p-3 pl-10 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter password"
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Login Button */}
+            <button
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "LOGIN >>"}
+            </button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <LoginFooter />
       </div>
     </>
   );
 }
-
-export default Login
-  
