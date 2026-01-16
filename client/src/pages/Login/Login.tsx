@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import loginBackground from "../../assets/images/loginback.png";
 import LoginFooter from "./LoginFooter";
 import { User, Lock, Eye, EyeOff } from "lucide-react";
-import logo from "../../assets/images/navbarlogo.png";
 
 
 export default function Login() {

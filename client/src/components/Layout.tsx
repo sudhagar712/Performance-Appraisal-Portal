@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../api/authApi";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -19,7 +19,9 @@ export default function Layout({
   const handleLogout = async () => {
     try {
       await logout().unwrap();
-    } catch {}
+    } catch {
+      // Ignore logout errors
+    }
     dispatch(clearCredentials());
     navigate("/login");
   };
