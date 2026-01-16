@@ -51,7 +51,7 @@ export default function Login() {
      
       
       <div className="min-h-screen flex flex-col ">
-        <div className="flex-1 flex items-center  md:justify-center login-background p-5">
+        <div className="flex-1 flex items-center md md:justify-center login-background p-5">
           <form
             onSubmit={submit}
             className="bg-white/30 backdrop-blur-sm w-full max-w-[600px] p-8 rounded-xl shadow-xl border border-gray-200"
