@@ -144,14 +144,16 @@ export const loginApi = async(req,res)=> {
 //  Logout
 export const logoutApi = async (req, res) => {
   try {
-     res.clearCookie("token", {
-       httpOnly: true,
-       sameSite: "lax",
-       secure: process.env.NODE_ENV === "production",
-       path: "/",
-     });
+    const isProd = process.env.NODE_ENV === "production";
+    // Clear cookie with same options as setCookie
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: isProd, 
+      sameSite: isProd ? "none" : "lax", 
+      path: "/",
+    });
 
-     res.json({ success: true, message: "Logout success" });
+    res.json({ success: true, message: "Logout success" });
   } catch (error) {
     res.status(500).json({
       success: false,
