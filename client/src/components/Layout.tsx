@@ -5,6 +5,7 @@ import { useLogoutMutation } from "../api/authApi";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { clearCredentials } from "../features/auth/authSlice";
 import { User } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Layout({
   children,
@@ -22,6 +23,7 @@ export default function Layout({
   const handleLogout = async () => {
     try {
       await logout().unwrap();
+      toast.success("Logged out successfully");
     } catch {
       // Ignore logout errors
     }

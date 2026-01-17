@@ -21,32 +21,24 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Use memory storage for Vercel, disk storage for local
-const getStorage = () => {
-  if (process.env.VERCEL) {
-    // Vercel - use memory storage (will upload to Blob)
-    return multer.memoryStorage();
-  } else {
-    // Local - use disk storage
-    const uploadsDir = path.join(__dirname, "../uploads/profile");
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    
-    return multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(null, uploadsDir);
-      },
-      filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, `profile-${uniqueSuffix}${path.extname(file.originalname)}`);
-      },
-    });
-  }
-};
+// Configure disk storage
+const uploadsDir = path.join(__dirname, "../uploads/profile");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `profile-${uniqueSuffix}${path.extname(file.originalname)}`);
+  },
+});
 
 const upload = multer({
-  storage: getStorage(),
+  storage: storage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },

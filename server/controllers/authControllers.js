@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import * as vercelBlobModule from "../config/vercelBlob.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -199,52 +198,24 @@ export const updateProfileApi = async (req, res) => {
 
     // Update profile image if uploaded
     if (req.file) {
-      try {
-        // Get current user to check for old image
-        const user = await User.findById(userId);
-        
-        // Delete old image if exists
-        if (user.profileImage) {
-          if (process.env.VERCEL && vercelBlobModule.deleteFromVercelBlob) {
-            // Vercel - delete from Blob Storage
-            await vercelBlobModule.deleteFromVercelBlob(user.profileImage);
-          } else {
-            // Local - delete from filesystem
-            try {
-              const oldImagePath = path.join(__dirname, "..", user.profileImage.replace("/uploads", "uploads"));
-              if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-              }
-            } catch (deleteError) {
-              console.error("Error deleting old image:", deleteError);
-            }
+      // Get current user to check for old image
+      const user = await User.findById(userId);
+      
+      // Delete old image if exists
+      if (user.profileImage) {
+        try {
+          const oldImagePath = path.join(__dirname, "..", user.profileImage.replace("/uploads", "uploads"));
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
           }
+        } catch (deleteError) {
+          console.error("Error deleting old image:", deleteError);
+          // Continue even if deletion fails
         }
-
-        // Upload new image
-        if (process.env.VERCEL && vercelBlobModule.uploadToVercelBlob) {
-          // Vercel - upload to Blob Storage
-          try {
-            const filename = `profile/${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(req.file.originalname)}`;
-            const imageUrl = await vercelBlobModule.uploadToVercelBlob(req.file.buffer, filename);
-            updateData.profileImage = imageUrl;
-          } catch (blobError) {
-            console.error("Vercel Blob upload failed:", blobError);
-            // Fallback to local storage if Blob fails
-            updateData.profileImage = `/uploads/profile/${req.file.filename}`;
-          }
-        } else {
-          // Local - store file path
-          updateData.profileImage = `/uploads/profile/${req.file.filename}`;
-        }
-      } catch (uploadError) {
-        console.error("Error uploading image:", uploadError);
-        return res.status(500).json({
-          success: false,
-          message: "Failed to upload image",
-          error: process.env.NODE_ENV === "development" ? uploadError.message : undefined,
-        });
       }
+
+      // Store file path
+      updateData.profileImage = `/uploads/profile/${req.file.filename}`;
     }
 
     if (Object.keys(updateData).length === 0) {

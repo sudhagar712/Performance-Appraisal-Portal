@@ -1,14 +1,15 @@
 import { useState, useRef } from "react";
-import Layout from "../components/Layout";
+import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../app/hooks";
 import { useUpdateProfileMutation, useGetCurrentUserQuery } from "../api/authApi";
 import { setCredentials } from "../features/auth/authSlice";
-import { Camera, User, Mail, Save } from "lucide-react";
+import { Camera, User, Mail, Save, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function Profile() {
   const { user } = useAppSelector((s) => s.auth);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
   const { refetch } = useGetCurrentUserQuery();
   
@@ -34,13 +35,13 @@ export default function Profile() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
+      // .........................................Validate file type................................
       if (!file.type.startsWith("image/")) {
         toast.error("Please select an image file");
         return;
       }
       
-      // Validate file size (5MB)
+      //..................................... Validate file size (5MB)..........................
       if (file.size > 5 * 1024 * 1024) {
         toast.error("Image size should be less than 5MB");
         return;
@@ -68,14 +69,16 @@ export default function Profile() {
 
       const response = await updateProfile(formData).unwrap();
       
-      // Update Redux store with new user data
+     
       dispatch(setCredentials(response.user));
       
-      // Refetch to get latest data
+     
       await refetch();
-      
       toast.success("Profile updated successfully!");
       setSelectedImage(null);
+      
+
+      navigate(user?.role === "manager" ? "/manager" : "/employee");
     } catch (err: unknown) {
       const error = err as { data?: { message?: string } };
       toast.error(error?.data?.message || "Failed to update profile");
@@ -88,11 +91,11 @@ export default function Profile() {
       return previewUrl;
     }
     if (user?.profileImage && imageError !== user.profileImage) {
-      // If it's already a full URL (http/https), use it as is
+     
       if (user.profileImage.startsWith("http")) {
         return user.profileImage;
       }
-      // Otherwise, prepend API URL for local files
+     
       return `${import.meta.env.VITE_API_URL}${user.profileImage}`;
     }
     return null;
@@ -105,10 +108,19 @@ export default function Profile() {
   };
 
   return (
-    <Layout title="Profile Settings">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white rounded-xl shadow-md border border-gray-100 p-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Profile</h2>
+    <div className="max-w-2xl mx-auto">
+      <div className="bg-white rounded-xl shadow-md border border-gray-100 p-8">
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => navigate(user?.role === "manager" ? "/manager" : "/employee")}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            title="Go back"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <h2 className="text-2xl font-bold text-gray-800">Edit Profile</h2>
+        </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Profile Image Section */}
@@ -130,6 +142,8 @@ export default function Profile() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   className="absolute bottom-0 right-0 bg-teal-600 hover:bg-teal-700 text-white p-2 rounded-full shadow-lg transition-colors"
+                  title="Upload profile picture"
+                  aria-label="Upload profile picture"
                 >
                   <Camera className="w-5 h-5" />
                 </button>
@@ -140,7 +154,12 @@ export default function Profile() {
                 accept="image/*"
                 onChange={handleImageChange}
                 className="hidden"
+                aria-label="Profile image upload"
+                id="profile-image-input"
               />
+              <label htmlFor="profile-image-input" className="sr-only">
+                Upload profile picture
+              </label>
               <p className="text-sm text-gray-500 mt-2">
                 Click the camera icon to upload a profile picture
               </p>
@@ -151,35 +170,39 @@ export default function Profile() {
 
             {/* Name Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name-input" className="block text-sm font-medium text-gray-700 mb-2">
                 <div className="flex items-center gap-2">
                   <User className="w-4 h-4" />
                   Full Name
                 </div>
               </label>
               <input
+                id="name-input"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition"
                 placeholder="Enter your full name"
                 required
+                aria-label="Full name"
               />
             </div>
 
             {/* Email Field (Read-only) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email-input" className="block text-sm font-medium text-gray-700 mb-2">
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
                   Email Address
                 </div>
               </label>
               <input
+                id="email-input"
                 type="email"
                 value={user?.email || ""}
                 disabled
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                aria-label="Email address"
               />
               <p className="text-xs text-gray-400 mt-1">
                 Email cannot be changed
@@ -188,14 +211,16 @@ export default function Profile() {
 
             {/* Role Field (Read-only) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="role-input" className="block text-sm font-medium text-gray-700 mb-2">
                 Role
               </label>
               <input
+                id="role-input"
                 type="text"
                 value={user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : ""}
                 disabled
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+                aria-label="User role"
               />
             </div>
 
@@ -213,7 +238,6 @@ export default function Profile() {
           </form>
         </div>
       </div>
-    </Layout>
   );
 }
 

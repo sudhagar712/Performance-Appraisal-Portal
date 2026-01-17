@@ -40,9 +40,9 @@ export default function Login() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col md:flex-row relative px-2 sm:px-6 md:px-8 lg:px-12">
+      <div className="min-h-screen flex flex-col md:flex-row relative  sm:px-6 md:px-8 lg:px-12">
         {/* Left Section - Image */}
-        <div className="blue-gradient-bg w-full md:w-1/2 flex flex-col justify-start md:items-center md:justify-center p-4 sm:p-6 md:p-8 lg:p-12 relative min-h-[40vh] sm:min-h-[45vh] md:min-h-screen overflow-hidden">
+        <div className=" w-full md:w-1/2 flex flex-col justify-start md:items-center md:justify-center p-4 sm:p-6 md:p-8 lg:p-12 relative min-h-[40vh] sm:min-h-[45vh] md:min-h-screen overflow-hidden">
           <div className="absolute inset-0 flex items-center justify-center z-10 ">
             <img
               src={loginLeftImage}
@@ -124,7 +124,7 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="mt-5 sm:mt-6 md:mt-8">
+            <div className="mt-5 sm:mt-6 md:mt-8 mb-10">
               <LoginFooter />
             </div>
           </div>

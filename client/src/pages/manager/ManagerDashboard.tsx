@@ -1,4 +1,4 @@
-import DashboardLayout from "../../components/DashboardLayout";
+import DashboardLayout from "../../components/EmployeeLayout/DashboardLayout";
 import { useManagerSubmissionsQuery } from "../../api/appraisalApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
