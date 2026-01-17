@@ -53,7 +53,7 @@ export default function Login() {
         </div>
 
         {/* Right Section - Login Form */}
-        <div className="w-full md:w-1/2 mt-4 sm:mt-5 md:mt-0 bg-white flex items-start md:items-center justify-center p-4 sm:p-5 md:p-10 lg:p-12 md:relative">
+        <div className="w-full md:w-1/2  sm:mt-5 md:mt-0 bg-white flex items-start md:items-center justify-center p-4 sm:p-5 md:p-10 lg:p-12 md:relative">
           <div className="w-full max-w-[95%] sm:max-w-md md:max-w-lg lg:max-w-md -mt-12 sm:-mt-16 md:mt-0 bg-white rounded-t-3xl md:rounded-none shadow-lg md:shadow-none p-5 sm:p-6 md:p-8 lg:p-0 z-20">
             <div className="hidden md:block mb-6 lg:mb-8">
               <h1 className="text-2xl md:text-3xl lg:text-3xl font-bold text-[#1E3A5F] mb-2">
@@ -124,7 +124,7 @@ export default function Login() {
               </button>
             </form>
 
-            <div className="mt-5 sm:mt-6 md:mt-8 mb-10">
+            <div className="mt-5 sm:mt-6 md:mt-8 mb-20">
               <LoginFooter />
             </div>
           </div>
