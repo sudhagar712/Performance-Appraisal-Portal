@@ -29,8 +29,17 @@ export const authApi = apiSlice.injectEndpoints({
       query: () => "/auth/me",
       providesTags: ["Auth"],
     }),
+
+    updateProfile: builder.mutation<MeResponse, FormData>({
+      query: (formData) => ({
+        url: "/auth/profile",
+        method: "PUT",
+        body: formData,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useGetCurrentUserQuery } =
+export const { useLoginMutation, useLogoutMutation, useGetCurrentUserQuery, useUpdateProfileMutation } =
   authApi;

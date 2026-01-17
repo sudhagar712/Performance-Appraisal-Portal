@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
     ref: "User",
     default: null,
   },
+  profileImage: {
+    type: String,
+    default: null,
+  },
+  
 },{ timestamps: true });
 // Hash password before save
 userSchema.pre("save", async function () {

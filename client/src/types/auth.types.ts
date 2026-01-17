@@ -6,6 +6,7 @@ export interface User {
   email: string;
   role: Role;
   managerId?: string;
+  profileImage?: string;
 }
 
 export interface LoginRequest {

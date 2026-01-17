@@ -6,6 +6,7 @@ import SelfAppraisalForm from "../pages/employee/SelfAppraisalForm";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import ManagerReview from "../pages/manager/ManagerReview";
 import Notifications from "../pages/Notifications";
+import Profile from "../pages/Profile";
 
 export default function AppRoutes() {
   return (
@@ -53,6 +54,15 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute roles={["employee", "manager"]}>
             <Notifications />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute roles={["employee", "manager"]}>
+            <Profile />
           </ProtectedRoute>
         }
       />

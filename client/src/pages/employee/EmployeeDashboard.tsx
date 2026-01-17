@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import Layout from "../../components/Layout";
+import DashboardLayout from "../../components/DashboardLayout";
 import { useCreateDraftMutation } from "../../api/appraisalApi";
 import { useAppSelector } from "../../app/hooks";
 import { FileText, PlusCircle, CheckCircle, TrendingUp, Award } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function EmployeeDashboard() {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ export default function EmployeeDashboard() {
       navigate(`/employee/appraisal/${res.appraisal._id}`);
     } catch (err: unknown) {
       const error = err as { data?: { message?: string } };
-      alert(error?.data?.message || "Draft create failed");
+      toast.error(error?.data?.message || "Draft create failed");
     }
   };
 
   return (
-    <Layout title="Employee Dashboard">
+    <DashboardLayout title="Employee Dashboard">
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-blue-600 to-teal-600 rounded-2xl p-6 text-white shadow-lg">
@@ -96,6 +97,6 @@ export default function EmployeeDashboard() {
         </div>
 
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 }

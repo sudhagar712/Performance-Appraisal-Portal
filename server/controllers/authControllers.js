@@ -1,5 +1,11 @@
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 
@@ -8,7 +14,7 @@ const setTokenCookie = (res, token) => {
   const isProd = process.env.NODE_ENV === "production";
   res.cookie("token", token, {
     httpOnly: true,
-    secure: isProd, // true in production
+    secure: isProd, 
     sameSite: isProd ? "none" : "lax",
     path: "/",
     maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -16,7 +22,7 @@ const setTokenCookie = (res, token) => {
 };
 
 
-// register api
+// register api - prototype implementation
 
 export const registerApi = async (req, res) => {
   try {
@@ -74,6 +80,7 @@ export const registerApi = async (req, res) => {
         email: user.email,
         role: user.role,
         managerId: user.managerId,
+        profileImage: user.profileImage || null,
       },
     });
   } catch (error) {
@@ -125,6 +132,7 @@ export const loginApi = async(req,res)=> {
          name: user.name,
          email: user.email,
          role: user.role,
+         profileImage: user.profileImage || null,
        },
      });
 
@@ -174,4 +182,66 @@ export const meApi = async (req, res) => {
       message: "Internal server error",
     });
   }
-    };
+};
+
+// ✅ Update profile
+export const updateProfileApi = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { name } = req.body;
+    let updateData = {};
+
+    // Update name if provided
+    if (name) {
+      updateData.name = name.trim();
+    }
+
+    // Update profile image if uploaded
+    if (req.file) {
+      // Get current user to check for old image
+      const user = await User.findById(userId);
+      
+      // Delete old image if exists
+      if (user.profileImage) {
+        try {
+          const oldImagePath = path.join(__dirname, "..", user.profileImage.replace("/uploads", "uploads"));
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+          }
+        } catch (deleteError) {
+          console.error("Error deleting old image:", deleteError);
+          // Continue even if deletion fails
+        }
+      }
+
+      // Store file path
+      updateData.profileImage = `/uploads/profile/${req.file.filename}`;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No data provided to update",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    res.json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update Profile API Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
+  }
+};

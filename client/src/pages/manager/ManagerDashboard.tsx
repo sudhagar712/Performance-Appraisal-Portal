@@ -1,4 +1,4 @@
-import Layout from "../../components/Layout";
+import DashboardLayout from "../../components/DashboardLayout";
 import { useManagerSubmissionsQuery } from "../../api/appraisalApi";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
@@ -28,7 +28,7 @@ export default function ManagerDashboard() {
   const pendingReviews = submissions.filter((a) => a.status === "submitted");
 
   return (
-    <Layout title="Manager Dashboard">
+    <DashboardLayout title="Manager Dashboard">
       <div className="space-y-6">
         {/* Welcome Section */}
         <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
@@ -232,6 +232,6 @@ export default function ManagerDashboard() {
           )}
         </div>
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 }

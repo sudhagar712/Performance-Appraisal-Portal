@@ -6,6 +6,11 @@ import authRoutes from "./routes/authRoutes.js";
 import appraisalRoutes from "./routes/appraisalRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -15,6 +20,9 @@ dotenv.config({
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Serve static files from uploads directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // cors configuration
 app.use(
