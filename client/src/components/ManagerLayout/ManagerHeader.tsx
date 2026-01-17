@@ -2,14 +2,14 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
 import { User, Menu } from "lucide-react";
 import { useState } from "react";
-import Notification from "./Notification";
+import Notification from "../EmployeeLayout/Notification";
 
-interface HeaderProps {
+interface ManagerHeaderProps {
   title?: string;
   onMenuClick: () => void;
 }
 
-export default function Header({ title, onMenuClick }: HeaderProps) {
+export default function ManagerHeader({ title, onMenuClick }: ManagerHeaderProps) {
   const { user } = useAppSelector((s) => s.auth);
   const navigate = useNavigate();
   const [imageError, setImageError] = useState<string | null>(null);
@@ -27,10 +27,10 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
           </button>
           <div>
             <h1 className="text-xl font-bold text-gray-800">
-              {title || "Dashboard"}
+              {title || "Manager Dashboard"}
             </h1>
             <p className="text-xs text-gray-500 hidden sm:block">
-              {user?.role === "employee" ? "Employee" : "Manager"} Portal
+              Manager Portal
             </p>
           </div>
         </div>
@@ -43,26 +43,20 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
             className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
             title="Profile"
           >
-            {user?.profileImage ? (
-              imageError !== user.profileImage ? (
-                <img
-                  src={
-                    user.profileImage.startsWith("http")
-                      ? user.profileImage
-                      : `${import.meta.env.VITE_API_URL}${user.profileImage}`
-                  }
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover"
-                  onError={() => setImageError(user.profileImage || null)}
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                  <User className="w-5 h-5 text-gray-500" />
-                </div>
-              )
+            {user?.profileImage && imageError !== user.profileImage ? (
+              <img
+                src={
+                  user.profileImage.startsWith("http")
+                    ? user.profileImage
+                    : `${import.meta.env.VITE_API_URL}${user.profileImage}`
+                }
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover"
+                onError={() => setImageError(user.profileImage || null)}
+              />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                <User className="w-5 h-5 text-gray-500" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center">
+                <User className="w-5 h-5 text-white" />
               </div>
             )}
           </button>

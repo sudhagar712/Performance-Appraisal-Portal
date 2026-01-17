@@ -4,6 +4,7 @@ import {
   createDraft,
   saveDraft,
   submitSelf,
+  employeeList,
   managerList,
   getById,
   managerReview,
@@ -14,6 +15,7 @@ const router = express.Router();
 router.post("/", protect, authorizeRoles("employee"), createDraft);
 router.put("/:id", protect, authorizeRoles("employee"), saveDraft);
 router.post("/:id/submit", protect, authorizeRoles("employee"), submitSelf);
+router.get("/employee", protect, authorizeRoles("employee"), employeeList);
 
 router.get("/", protect, authorizeRoles("manager"), managerList);
 router.get("/:id", protect, getById);

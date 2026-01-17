@@ -25,12 +25,18 @@ export const createDraft = async (req, res) => {
 
 //............................. Save Draft .............................
 export const saveDraft = async (req, res) => {
-  const appraisal = await Appraisal.findOne({
-    _id: req.params.id,
-    employeeId: req.user._id,
-  });
+  let appraisal;
+  try {
+    appraisal = await Appraisal.findById(req.params.id);
+  } catch (err) {
+    if (err.name === "CastError")
+      return res.status(400).json({ success: false, message: "Invalid appraisal ID" });
+    throw err;
+  }
   if (!appraisal)
     return res.status(404).json({ success: false, message: "Not found" });
+  if (String(appraisal.employeeId) !== String(req.user._id))
+    return res.status(403).json({ success: false, message: "Not authorized to update this appraisal" });
 
   const items = req.body.items;
 
@@ -66,6 +72,17 @@ export const submitSelf = async (req, res) => {
   });
 
   res.json({ success: true, message: "Submitted", appraisal });
+};
+
+//............................. Employee list .............................
+export const employeeList = async (req, res) => {
+  const list = await Appraisal.find({
+    employeeId: req.user._id,
+  })
+    .populate("managerId", "name email")
+    .sort({ updatedAt: -1 });
+
+  res.json({ success: true, appraisals: list });
 };
 
 //............................. Manager list .............................

@@ -7,6 +7,7 @@ import type {
   SubmitResponse,
   ManagerSubmissionsResponse,
   GetAppraisalResponse,
+  Appraisal,
 } from "../types";
 
 export const appraisalApi = apiSlice.injectEndpoints({
@@ -50,6 +51,11 @@ export const appraisalApi = apiSlice.injectEndpoints({
       providesTags: ["Appraisal"],
     }),
 
+    employeeAppraisals: builder.query<{ success: boolean; appraisals: Appraisal[] }, void>({
+      query: () => "/appraisals/employee",
+      providesTags: ["Appraisal"],
+    }),
+
     managerReview: builder.mutation<
       SubmitResponse,
       { id: string; body: SaveDraftRequest }
@@ -70,5 +76,6 @@ export const {
   useSubmitSelfMutation,
   useManagerSubmissionsQuery,
   useGetAppraisalByIdQuery,
+  useEmployeeAppraisalsQuery,
   useManagerReviewMutation,
 } = appraisalApi;

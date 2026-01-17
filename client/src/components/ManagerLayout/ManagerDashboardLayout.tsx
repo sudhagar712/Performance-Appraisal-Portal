@@ -1,23 +1,23 @@
 import type { ReactNode } from "react";
 import { useState } from "react";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import ManagerSidebar from "./ManagerSidebar";
+import ManagerHeader from "./ManagerHeader";
 
-interface DashboardLayoutProps {
+interface ManagerDashboardLayoutProps {
   children: ReactNode;
   title?: string;
 }
 
-export default function DashboardLayout({ children, title }: DashboardLayoutProps) {
+export default function ManagerDashboardLayout({ children, title }: ManagerDashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <ManagerSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 lg:ml-64">
-        <Header 
+        <ManagerHeader 
           title={title} 
           onMenuClick={() => setSidebarOpen(!sidebarOpen)} 
         />

@@ -19,6 +19,7 @@ dotenv.config({
 });
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For parsing form data
 app.use(cookieParser());
 
 // Serve static files from uploads directory

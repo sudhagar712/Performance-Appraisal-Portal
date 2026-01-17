@@ -24,10 +24,9 @@ export default function Profile() {
       return URL.createObjectURL(selectedImage);
     }
     if (user?.profileImage) {
-      if (user.profileImage.startsWith("http")) {
-        return user.profileImage;
-      }
-      return `${import.meta.env.VITE_API_URL}${user.profileImage}`;
+      return user.profileImage.startsWith("http")
+        ? user.profileImage
+        : `${import.meta.env.VITE_API_URL}${user.profileImage}`;
     }
     return null;
   };
@@ -85,18 +84,15 @@ export default function Profile() {
     }
   };
 
-  const getImageUrl = () => {
+  const getDisplayImageUrl = () => {
     const previewUrl = getPreviewUrl();
     if (previewUrl && imageError !== previewUrl) {
       return previewUrl;
     }
     if (user?.profileImage && imageError !== user.profileImage) {
-     
-      if (user.profileImage.startsWith("http")) {
-        return user.profileImage;
-      }
-     
-      return `${import.meta.env.VITE_API_URL}${user.profileImage}`;
+      return user.profileImage.startsWith("http")
+        ? user.profileImage
+        : `${import.meta.env.VITE_API_URL}${user.profileImage}`;
     }
     return null;
   };
@@ -127,9 +123,9 @@ export default function Profile() {
             <div className="flex flex-col items-center mb-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200 bg-gray-100 flex items-center justify-center">
-                  {getImageUrl() ? (
+                  {getDisplayImageUrl() ? (
                     <img
-                      src={getImageUrl() || undefined}
+                      src={getDisplayImageUrl() || undefined}
                       alt="Profile"
                       className="w-full h-full object-cover"
                       onError={handleImageError}

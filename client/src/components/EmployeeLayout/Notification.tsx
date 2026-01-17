@@ -10,20 +10,30 @@ const Notification = () => {
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const { data, isLoading, error, refetch } = useGetNotificationsQuery(undefined, {
     skip: !isAuthenticated || !user,
+    pollingInterval: 30000, 
+    refetchOnFocus: true, 
+    refetchOnMountOrArgChange: true, 
   });
   const [markRead] = useMarkReadMutation();
 
   const notifications = data?.notifications || [];
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  // Log error for debugging
+
   useEffect(() => {
     if (error) {
       console.error("Notification error:", error);
     }
   }, [error]);
 
-  // Close modal when clicking outside
+
+  useEffect(() => {
+    if (isOpen && isAuthenticated && user) {
+      refetch();
+    }
+  }, [isOpen, isAuthenticated, user, refetch]);
+
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -45,6 +55,7 @@ const Notification = () => {
   const handleMarkAsRead = async (id: string) => {
     try {
       await markRead(id).unwrap();
+      refetch();
     } catch (error) {
       console.error("Failed to mark as read:", error);
     }
@@ -54,6 +65,7 @@ const Notification = () => {
     try {
       const unreadNotifications = notifications.filter((n) => !n.isRead);
       await Promise.all(unreadNotifications.map((n) => markRead(n._id).unwrap()));
+      refetch();
     } catch (error) {
       console.error("Failed to mark all as read:", error);
     }
