@@ -7,7 +7,6 @@ import {
   X,
   Home,
   FileText,
-  Bell,
   LogOut,
   Settings,
 } from "lucide-react";
@@ -51,12 +50,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       path: user?.role === "employee" ? "/employee" : "/manager",
       active: location.pathname.includes("/appraisal") || location.pathname.includes("/review"),
     },
-    {
-      name: "Notifications",
-      icon: Bell,
-      path: "/notifications",
-      active: location.pathname === "/notifications",
-    },
+   
     {
       name: "Profile",
       icon: Settings,

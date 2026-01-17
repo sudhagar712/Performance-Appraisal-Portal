@@ -1,4 +1,3 @@
-import Layout from "../components/Layout";
 import Loader from "../components/Loader";
 import {
   useGetNotificationsQuery,
@@ -12,7 +11,7 @@ export default function Notifications() {
   if (isLoading) return <Loader />;
 
   return (
-    <Layout title="Notifications">
+   
       <div className="bg-white p-6 rounded-xl shadow">
         <h2 className="text-lg font-semibold">Your Notifications</h2>
 
@@ -45,6 +44,6 @@ export default function Notifications() {
           )}
         </div>
       </div>
-    </Layout>
+ 
   );
 }

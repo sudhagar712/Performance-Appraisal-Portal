@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
-import { User, Menu, Bell } from "lucide-react";
+import { User, Menu } from "lucide-react";
 import { useState } from "react";
+import Notification from "./Notification";
 
 interface HeaderProps {
   title?: string;
@@ -36,13 +37,7 @@ export default function Header({ title, onMenuClick }: HeaderProps) {
 
         {/* Header Actions */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate("/notifications")}
-            className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors relative"
-            title="Notifications"
-          >
-            <Bell className="w-5 h-5" />
-          </button>
+          <Notification />
           <button
             onClick={() => navigate("/profile")}
             className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
