@@ -8,27 +8,23 @@ Built as a functional prototype for the programming assessment.
 Frontend - npm run dev
 backend - npm run server 
 
-......................................
-Backedn Api 
-Login - Post  -  http://localhost:8000/api/auth/login (Role based Authenication - manager and employee)
-Logout - Post -  http://localhost:8000/api/auth/logout
+##Backedn Api 
+ Login - Post  -  http://localhost:8000/api/auth/login (Role based Authenication - manager and employee)
+ Logout - Post -  http://localhost:8000/api/auth/logout
 
-----------------Employee---------------------
-CreateDraft (employee) - Post - http://localhost:8000/api/appraisals
-SaveDraft (employee) - Put - http://localhost:8000/api/appraisals/id
-apprasial submitself (employee)- Post - http://localhost:8000/api/appraisals/id/submit
+##Employee
+  CreateDraft (employee) - Post - http://localhost:8000/api/appraisals
+  SaveDraft (employee) - Put - http://localhost:8000/api/appraisals/id
+  apprasial submitself (employee)- Post - http://localhost:8000/api/appraisals/id/submit
 
-----------------Manager--------------------------
+## Manager
+ getapprasial-manager  : Get - http://localhost:8000/api/appraisals
+ getapprasialbyid   : Get - http://localhost:8000/api/appraisals/id
+ manager review - Post - http://localhost:8000/api/appraisals/id/review
 
-getapprasial-manager  : Get - http://localhost:8000/api/appraisals
-getapprasialbyid   : Get - http://localhost:8000/api/appraisals/id
-manager review - Post - http://localhost:8000/api/appraisals/id/review
-
-
-..............Notification...........................
-
-getnotifaction : Get - http://localhost:8000/api/notification
-readnotifaction: Post - http://localhost:8000/api/notification/id/read
+## Notification
+  getnotifaction : Get - http://localhost:8000/api/notification
+  readnotifaction: Post - http://localhost:8000/api/notification/id/read
 
 
 
