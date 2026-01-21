@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../../components/EmployeeLayout/DashboardLayout";
+import AppraisalStatusTable from "../../components/EmployeeLayout/AppraisalStatusTable";
 import { useCreateDraftMutation, useEmployeeAppraisalsQuery } from "../../api/appraisalApi";
 import { useAppSelector } from "../../app/hooks";
 import { FileText, PlusCircle, CheckCircle, TrendingUp, Award, Clock, User } from "lucide-react";
@@ -74,6 +75,9 @@ export default function EmployeeDashboard() {
                   </div>
                 ) : (
                   <p className="text-2xl font-bold mt-1">No Active</p>
+                )}
+                {currentAppraisal && (
+                  <p className="text-xs text-blue-200 mt-1">Cycle: {currentAppraisal.cycle}</p>
                 )}
               </div>
               <FileText className="w-10 h-10 text-blue-200" />
@@ -189,6 +193,9 @@ export default function EmployeeDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Appraisal Status Section */}
+        <AppraisalStatusTable appraisals={appraisals} />
 
         {/* My Goals & Performance Overview */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

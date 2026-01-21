@@ -19,13 +19,13 @@ dotenv.config({
 });
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // For parsing form data
+app.use(express.urlencoded({ extended: true })); 
 app.use(cookieParser());
 
-// Serve static files from uploads directory
+//......................................static files from uploads directory......................................
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// cors configuration
+//............................................ cors configuration....................................
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
@@ -33,10 +33,12 @@ app.use(
   })
 );
 
-
+// .............................................api testing ..............................................
 app.get("/", (req,res)=> {
     res.send("backend is running ")
 })
+
+// .............................................api ...................................
 
 app.use("/api/auth", authRoutes);
 app.use("/api/appraisals", appraisalRoutes);
@@ -44,6 +46,7 @@ app.use("/api/notification", notificationRoutes);
 
 const PORT = process.env.PORT || 8000
 
+// ..........................................server start..................................
 const startServer = async () => {
     try {
         await connectDB();
