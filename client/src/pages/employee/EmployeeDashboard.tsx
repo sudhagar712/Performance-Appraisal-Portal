@@ -15,7 +15,9 @@ export default function EmployeeDashboard() {
   const { data: appraisalsData, isLoading: appraisalsLoading } = useEmployeeAppraisalsQuery();
 
   const appraisals = appraisalsData?.appraisals || [];
-  const currentAppraisal = appraisals.find(a => a.status === "draft" || a.status === "submitted" || a.status === "reviewed");
+
+  //...........................current appraisal..........................................
+  const currentAppraisal = appraisals.length > 0 ? appraisals[0] : null;
   const goalsProgress = currentAppraisal 
     ? Math.round((currentAppraisal.items.reduce((sum, item) => {
         const completedKPIs = item.kpis.filter(kpi => kpi.selfRating > 0).length;
@@ -25,6 +27,18 @@ export default function EmployeeDashboard() {
   const managerRating = currentAppraisal?.finalScoreManager || 0;
   const pendingTasks = appraisals.filter(a => a.status === "draft").length;
 
+ 
+ const overallScore = currentAppraisal
+  ? (currentAppraisal.status === "reviewed" || currentAppraisal.status === "approved") &&
+    currentAppraisal.finalScoreManager > 0
+    ? Math.round(currentAppraisal.finalScoreManager)
+    : currentAppraisal.finalScoreEmployee > 0
+    ? Math.round(currentAppraisal.finalScoreEmployee)
+    : 0
+  : 0;
+
+
+  // ...................................api for start appraisal..........................................
   const startAppraisal = async () => {
     try {
       const res = await createDraft({ cycle: "2026-Q1" }).unwrap();
@@ -34,6 +48,7 @@ export default function EmployeeDashboard() {
       toast.error(error?.data?.message || "Draft create failed");
     }
   };
+
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -84,11 +99,11 @@ export default function EmployeeDashboard() {
             </div>
           </div>
 
-          {/* Goals Progress */}
+          {/* Appraisal Completion */}
           <div className="bg-gradient-to-br from-green-500 to-green-600 p-5 rounded-xl shadow-lg text-white hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-green-100 text-sm mb-1">Goals Progress</p>
+                <p className="text-green-100 text-sm mb-1">Appraisal Completion</p>
                 <div className="relative w-16 h-16 mt-2">
                   <svg className="w-16 h-16 transform -rotate-90">
                     <circle
@@ -147,9 +162,9 @@ export default function EmployeeDashboard() {
                   )}
                   <div>
                     <p className="text-2xl font-bold text-gray-800">
-                      {managerRating > 0 ? `${managerRating.toFixed(1)}/5` : "N/A"}
+                      {managerRating > 0 ? `${Math.round(managerRating)}/100` : "N/A"}
                     </p>
-                    <p className="text-xs text-gray-500">Rating</p>
+                    <p className="text-xs text-gray-500">Score</p>
                   </div>
                 </div>
               </div>
@@ -227,37 +242,49 @@ export default function EmployeeDashboard() {
 
 
           {/* Performance Overview */}
-          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Performance Overview</h2>
-            <div className="flex items-center justify-center">
-              <div className="relative w-48 h-48">
-                <svg className="w-48 h-48 transform -rotate-90">
-                  <circle
-                    cx="96"
-                    cy="96"
-                    r="80"
-                    stroke="#e5e7eb"
-                    strokeWidth="12"
-                    fill="none"
-                  />
-                  <circle
-                    cx="96"
-                    cy="96"
-                    r="80"
-                    stroke="#10b981"
-                    strokeWidth="12"
-                    fill="none"
-                    strokeDasharray={`${(goalsProgress / 100) * 502.6} 502.6`}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-4xl font-bold text-gray-800">{goalsProgress}</span>
-                  <span className="text-sm text-gray-500">Overall Score</span>
-                </div>
-              </div>
-            </div>
-          </div>
+         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6">
+  <h2 className="text-xl font-bold text-gray-800 mb-4">
+    Performance Overview
+  </h2>
+
+  <div className="flex items-center justify-center">
+    <div className="relative w-48 h-48">
+      <svg className="w-48 h-48 transform -rotate-90">
+        <circle
+          cx="96"
+          cy="96"
+          r="80"
+          stroke="#e5e7eb"
+          strokeWidth="12"
+          fill="none"
+        />
+        <circle
+          cx="96"
+          cy="96"
+          r="80"
+          stroke="#10b981"
+          strokeWidth="12"
+          fill="none"
+          strokeDasharray={`${(overallScore / 100) * 502.6} 502.6`}
+          strokeLinecap="round"
+        />
+      </svg>
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-4xl font-bold text-gray-800">
+          {overallScore}
+        </span>
+        <span className="text-sm text-gray-500">Overall Score</span>
+
+        {/* ✅ Optional label */}
+        <span className="text-xs text-gray-400 mt-1">
+          out of 100
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
         </div>
 
        
