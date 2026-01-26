@@ -178,7 +178,7 @@ export default function ManagerReview() {
                           }}
                           aria-label="Manager Rating"
                         >
-                          <option value="">Select rating (1–5)</option>
+                          <option value="">rating (1–5)</option>
                           {[1, 2, 3, 4, 5].map((r) => (
                             <option key={r} value={r}>{r}</option>
                           ))}

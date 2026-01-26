@@ -65,7 +65,6 @@ export default function SelfAppraisalForm() {
     value: string | number
   ) => {
     const updated = [...items];
-    // @ts-expect-error - Dynamic field assignment is safe here
     updated[kraIndex].kpis[kpiIndex][field] =
       field === "selfRating" ? Number(value) : value;
     setItems(updated);
@@ -236,11 +235,12 @@ export default function SelfAppraisalForm() {
                             min="0"
                             max="100"
                             className="w-16 sm:w-20 px-2 py-2 text-sm font-semibold text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 touch-manipulation"
-                            value={kra.weightage}
+                            value={kra.weightage || 0}
                             aria-label={`KRA ${kraIndex + 1} weightage percentage`}
-                            onChange={(e) =>
-                              updateKRA(kraIndex, "weightage", e.target.value)
-                            }
+                            onChange={(e) => {
+                              const value = e.target.value === "" ? 0 : parseInt(e.target.value, 10);
+                              updateKRA(kraIndex, "weightage", isNaN(value) ? 0 : Math.min(100, Math.max(0, value)));
+                            }}
                           />
                           <span className="text-xs sm:text-sm text-gray-600">%</span>
                         </div>

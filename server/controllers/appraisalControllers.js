@@ -65,9 +65,13 @@ export const submitSelf = async (req, res) => {
   appraisal.status = "submitted";
   await appraisal.save();
 
+  // Get employee name for notification
+  const employee = await User.findById(req.user._id);
+  const employeeName = employee?.name || "Employee";
+
   await createNotification({
     toUserId: appraisal.managerId,
-    message: `Employee submitted appraisal (${appraisal.cycle})`,
+    message: `${employeeName} submitted appraisal (${appraisal.cycle})`,
     type: "SUBMITTED",
   });
 
@@ -145,9 +149,13 @@ export const managerReview = async (req, res) => {
   appraisal.status = mismatch ? "reviewed" : "approved";
   await appraisal.save();
 
+  // Get manager name for notification
+  const manager = await User.findById(req.user._id);
+  const managerName = manager?.name || "Manager";
+
   await createNotification({
     toUserId: appraisal.employeeId,
-    message: `Manager completed appraisal (${appraisal.cycle})`,
+    message: `${managerName} completed appraisal (${appraisal.cycle})`,
     type: "REVIEWED",
   });
 
